@@ -72,7 +72,7 @@ app.get('/api/contacts/:id', (req, res) => {
     const id = req.params.id
     const contact = contacts.find(c => c.id === id)
 
-    if (person) {
+    if (contact) {
         res.json(contact)
     } else {
         res.status(404).end()
