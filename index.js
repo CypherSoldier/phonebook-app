@@ -4,6 +4,7 @@ const app = express()
 
 app.use(morgan('tiny'))
 app.use(express.json())
+app.use(express.static('dist'))
 
 
 let contacts = [
@@ -90,7 +91,7 @@ app.get('/api/contacts', (req, res) => {
     res.json(contacts)
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
