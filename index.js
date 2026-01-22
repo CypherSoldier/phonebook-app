@@ -6,7 +6,7 @@ app.use(morgan('tiny'))
 app.use(express.json())
 app.use(express.static('dist'))
 
-
+// obj
 let contacts = [
     { 
       "id": "1",
