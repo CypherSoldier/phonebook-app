@@ -6,6 +6,8 @@ app.use(morgan('tiny'))
 app.use(express.json())
 app.use(express.static('dist'))
 
+const Contact = require('./models/contact')
+
 // obj
 let contacts = [
     { 
@@ -42,41 +44,25 @@ app.post('/api/contacts', (req, res) => {
     if (!body.name  || !body.number) {
         return res.status(400).json({error: 'name must be unique' })
     }
-    
-     // Check for duplicate name - SIMPLE!
-    if (contacts.find(c => c.name === body.name)) {
-        return res.status(400).json({error: 'name must be unique'})
-    }
-    
 
-    const newPerson = {
+    const contact = new Contact({
         id: generateId(),
         name: body.name,
         number: body.number
-    }
+    })
 
-    contacts = contacts.concat(newPerson)
-    res.json(newPerson)
-})
-
-
-app.get('/info', (req, res) => {
-    res.send(`
-        <h1>Phonebook has info for ${contacts.length} people</h1>
-        <p>${new Date()}</p>
-        `)
+    contact.save().then(savedContact => {
+        response.json(savedContact)
+    })
 })
 
 
 app.get('/api/contacts/:id', (req, res) => {
     const id = req.params.id
-    const contact = contacts.find(c => c.id === id)
 
-    if (contact) {
-        res.json(contact)
-    } else {
-        res.status(404).end()
-    }
+    Contact.findById(id).then(contact => {
+    res.json(contact)
+  })
 
 })
 
@@ -88,10 +74,12 @@ app.delete('/api/contacts/:id', (req, res) => {
 })
 
 app.get('/api/contacts', (req, res) => {
-    res.json(contacts)
+    Contact.find({}).then(contact => {
+        res.json(contact)
+    })
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
